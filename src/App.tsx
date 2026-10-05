@@ -140,41 +140,50 @@ function App() {
         }}
       />
       <div className="flex flex-col items-center h-screen mt-8">
-        <Label className="text-2xl">Einkaufsliste</Label>
-        <div className="flex flex-row gap-4 px-20 pt-3 pb-2">
-          <Input
-            ref={amountInputRef}
-            placeholder="Menge"
-            className="w-30/100 text-right border-b-1 px-1"
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
-          <Input
-            placeholder="Name"
-            className="flex-1 border-b-1 px-1"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-        <div className="w-full px-18 mb-3">
-          <Button
-            className="w-full cursor-pointer"
-            disabled={isButtonDisabled}
-            onClick={addNewArticle}
-          >
-            {" "}
-            Hinzufügen
-          </Button>
+        <div
+          id="header"
+          className="flex flex-col gap-4 px-20 pt-3 pb-2 items-center"
+        >
+          <Label className="text-2xl">Einkaufsliste</Label>
+
+          <div className="flex flex-row gap-4 px-20 pt-3 pb-2">
+            <Input
+              ref={amountInputRef}
+              placeholder="Menge"
+              className="w-30/100 text-right border-b-1 px-1"
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+            <Input
+              placeholder="Name"
+              className="flex-1 border-b-1 px-1"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+
+          <div className="w-full px-18 mb-3">
+            <Button
+              className="w-full cursor-pointer"
+              disabled={isButtonDisabled}
+              onClick={addNewArticle}
+            >
+              {" "}
+              Hinzufügen
+            </Button>
+          </div>
         </div>
 
-        <div className="flex flex-col w-full px-10 gap-2">
+        <div className="flex flex-wrap justify-center w-full px-10 gap-2">
           {list.map((article: Article) => (
-            <ArticleCard
-              key={article.name}
-              article={article}
-              onRemove={handleRemove}
-            />
+            <div className="w-full max-w-[440px]" key={article.name}>
+              <ArticleCard
+                key={article.name}
+                article={article}
+                onRemove={handleRemove}
+              />
+            </div>
           ))}
         </div>
       </div>
