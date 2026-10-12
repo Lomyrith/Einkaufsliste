@@ -10,12 +10,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { Input } from "@base-ui/react";
-
-export type PendingArticle = {
-  name: string;
-  addAmount: number;
-  currentAmount: number;
-};
+import { type PendingArticle } from "../types/PendingArticle";
 
 type ArticleConflictDialogProps = {
   pendingArticle: PendingArticle | null;
@@ -59,12 +54,14 @@ export function ArticleConflictDialog({
         <AlertDialogFooter>
           <AlertDialogCancel onClick={onCancel}>Abbrechen</AlertDialogCancel>
 
-          <div className="flex flex-row gap-2 w-full">
+          <div className="flex flex-row gap-2 w-full px-2">
             <Input
-              type="number"
+              type="text"
+              inputMode="numeric"
               value={targetAmount === 0 ? "" : targetAmount}
               onChange={(e) => setTargetAmount(Number(e.target.value) || 0)}
               className="w-1/4 text-right border-1 border-gray-300 rounded-md px-2"
+              autoFocus
             />
             <AlertDialogAction className="flex-1" onClick={handleOnConfirm}>
               Menge setzen

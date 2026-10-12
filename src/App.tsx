@@ -3,22 +3,16 @@ import { toast } from "sonner";
 import { Toaster } from "./components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Input } from "@base-ui/react";
-import { CheckCircleIcon } from "lucide-react";
-import { useState, memo, useRef } from "react";
-import {
-  ArticleConflictDialog,
-  type PendingArticle,
-} from "./components/ArticleConflictDialog";
-
-type Article = {
-  amount: number;
-  name: string;
-};
+import { Input } from "@/components/ui/input";
+import { useState, useRef, type SetStateAction } from "react";
+import { type Article } from "./types/Article";
+import { type PendingArticle } from "./types/PendingArticle";
+import ArticleCard from "./components/ArticleCards";
+import { ArticleConflictDialog } from "./components/ArticleConflictDialog";
 
 const storageKey = "articleList";
-const defaultName = "Esel";
-const defaultAmount = 3;
+const defaultName = "";
+const defaultAmount = 0;
 
 function saveArticleList(list: Article[]) {
   localStorage.setItem(storageKey, JSON.stringify(list));
@@ -29,34 +23,6 @@ function loadArticleList(): Article[] {
   if (!list) return [];
   return JSON.parse(list);
 }
-
-const ArticleCard = memo(function ArticleCard({
-  article,
-  onRemove,
-}: {
-  article: Article;
-  onRemove: (name: string) => void;
-}) {
-  return (
-    <div className="flex flex-row border rounded-xl px-2 py-1 w-full items-center">
-      <div className="flex-1 flex flex-col ml-7">
-        <label>{article.name}</label>
-        <label>{article.amount}</label>
-      </div>
-
-      <div className="flex justify-end">
-        <Button
-          variant="outline"
-          className="cursor-pointer"
-          onClick={() => onRemove(article.name)}
-        >
-          <CheckCircleIcon />
-          Abhaken
-        </Button>
-      </div>
-    </div>
-  );
-});
 
 function App() {
   const [list, setList] = useState<Article[]>(loadArticleList());
@@ -87,8 +53,11 @@ function App() {
         addAmount: parsedAmount,
       };
       setPendingArticle(pendingArticleTemp);
+      //Dialog öffnet sich
     } else {
-      setList([...list, { amount: parsedAmount, name: name?.trim() }]);
+      const newList = [...list, { amount: parsedAmount, name: name?.trim() }];
+      setList(newList);
+      saveArticleList(newList);
     }
     clearInputs();
   }
@@ -101,13 +70,11 @@ function App() {
 
     toast("Artikel existierte bereits! Menge wurde neu gesetzt!");
 
-    setList((prevList) =>
-      prevList.map((item) =>
-        item.name === article.name ? { ...item, amount: targetAmount } : item,
-      ),
+    const newList = list.map((item) =>
+      item.name === article.name ? { ...item, amount: targetAmount } : item,
     );
-
-    saveArticleList(list);
+    setList(newList);
+    saveArticleList(newList);
   }
 
   function clearInputs(): void {
@@ -150,16 +117,22 @@ function App() {
             <Input
               ref={amountInputRef}
               placeholder="Menge"
-              className="w-30/100 text-right border-b-1 px-1"
-              type="number"
+              className="w-30/100 text-right border-b-1 px-2"
+              type="text"
+              inputMode="numeric"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                setAmount(e.target.value)
+              }
+              autoFocus
             />
             <Input
               placeholder="Name"
               className="flex-1 border-b-1 px-1"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                setName(e.target.value)
+              }
             />
           </div>
 
